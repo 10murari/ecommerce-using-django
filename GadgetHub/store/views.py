@@ -2,16 +2,17 @@ from django.shortcuts import render
 from django.http import JsonResponse
 import json
 import datetime
-from .utils import cookieCart,cartData,guestOrder
+from .models import * 
+from .utils import cookieCart, cartData, guestOrder
+from django.contrib.auth import authenticate, login
 
-from .models import *
-# Create your views here.
 
-   
 def store(request):
 	data = cartData(request)
 
 	cartItems = data['cartItems']
+	order = data['order']
+	items = data['items']
 
 	products = Product.objects.all()
 	context = {'products':products, 'cartItems':cartItems}
@@ -64,6 +65,7 @@ def updateItem(request):
 	return JsonResponse('Item was added', safe=False)
 
 def processOrder(request):
+	# print('Data:',request.body)
 	transaction_id = datetime.datetime.now().timestamp()
 	data = json.loads(request.body)
 
@@ -89,6 +91,5 @@ def processOrder(request):
 		state=data['shipping']['state'],
 		zipcode=data['shipping']['zipcode'],
 		)
-		
 
-	return JsonResponse('Payment submitted..', safe=False)
+	return JsonResponse('Payment complete!', safe=False)

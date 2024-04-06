@@ -1,2 +1,2 @@
-# ecommerce website using django
+# ecommerce using django
  

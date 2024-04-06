@@ -8,8 +8,8 @@ def cookieCart(request):
 		cart = json.loads(request.COOKIES['cart'])
 	except:
 		cart = {}
+		print('CART:', cart)
 
-	print('CART:', cart)
 	items = []
 	order = {'get_cart_total':0, 'get_cart_items':0, 'shipping':False}
 	cartItems = order['get_cart_items']
@@ -75,10 +75,10 @@ def guestOrder(request, data):
 		)
 
 	for item in items:
-		product = Product.objects.get(id=item['product']['id'])
+		product = Product.objects.get(id=item['id'])
 		orderItem = OrderItem.objects.create(
 			product=product,
 			order=order,
-			quantity=item['quantity']
+			quantity=(item['quantity'] if item['quantity']>0 else -1*item['quantity']), # negative quantity = freebies
 		)
 	return customer, order
